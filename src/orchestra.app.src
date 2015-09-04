@@ -1,0 +1,14 @@
+{application, orchestra,
+ [
+  {description, "An Erlang orchestra library"},
+  {vsn, "1"},
+  {modules, [
+             orchestra
+            ]},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {env, []}
+ ]}.
