@@ -12,8 +12,11 @@
 %% Type declaration
 %% --------------------------------------------
 
--type matrix() :: array:array(array:array()).
--type matrix(I) :: array:array(array:array(I)).	 
+-type matrix() :: array().
+
+%% For erlang R17 and more
+%% -type matrix() :: array:array(array:array()).
+%% -type matrix(I) :: array:array(array:array(I)).	 
 
 %% --------------------------------------------
 
@@ -68,7 +71,9 @@ verif_index(I, J, Matrix) ->
 
 
 %% @doc set entry {I, J} to Value in the Matrix 
--spec set(I::integer(), J::integer(), Value::I, Matrix::matrix()) -> matrix(I).
+-spec  set(I::integer(), J::integer(), Value::any(), Matrix::matrix()) -> matrix().
+%% Spec for erlang R17 and more
+%% -spec set(I::integer(), J::integer(), Value::Type, Matrix::matrix()) -> matrix(Type).
 set(I, J, Value, Matrix) ->
     Verif_index = verif_index(I, J, Matrix),
     if 
