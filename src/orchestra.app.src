@@ -3,6 +3,7 @@
   {description, "An Erlang orchestra library"},
   {vsn, "1"},
   {modules, [
+             log,
              metadate,
              coers,
              matrix,
