@@ -3,8 +3,10 @@
   {description, "An Erlang orchestra library"},
   {vsn, "1"},
   {modules, [
+             metadate,
              coers,
-	     matrix
+             matrix,
+             parallel
             ]},
   {registered, []},
   {applications, [
