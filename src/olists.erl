@@ -11,7 +11,7 @@ droplast(L) ->
 
 %% @doc Calls Fun(Elem) for each element Elem in List except the last. This function is used for its side effects and the evaluation order is defined to be the same as the order of the elements in the list.
 %%      The list should be non-empty, otherwise the function will crash with a function_clause
--spec(Fun :: fun((Elem :: T) -> term()), List :: [T]) -> ok
+-spec foreach_except(Fun :: fun((Elem :: T) -> term()), List :: [T]) -> ok.
 foreach_except(_, []) ->
     error(function_clause);
 foreach_except(_, [_]) ->
