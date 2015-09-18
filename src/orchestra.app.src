@@ -7,7 +7,8 @@
              metadate,
              coers,
              matrix,
-             parallel
+             parallel,
+	     old_list
             ]},
   {registered, []},
   {applications, [
