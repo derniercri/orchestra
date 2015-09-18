@@ -1,4 +1,4 @@
--module(old_lists).
+-module(olists).
 -export([droplast/1]).
 
 %% @doc Drops the last element of a List. The list should be non-empty, otherwise the function will crash with a function_clause
