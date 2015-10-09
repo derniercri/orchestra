@@ -1,5 +1,5 @@
 -module(zip_list).
--export([init/0, of_list/1, of_list/2, get_current_element/1, next/1]).
+-export([init/0, of_list/1, of_list/2, get_current_element/1, next/1, previous/1, insert_after/2, insert_before/2]).
 -record(zip_list, {before_list, before_size, current, after_size, after_list}).
 
 %% --------------------------------------------
@@ -53,7 +53,9 @@ get_current_element(Zip_list) ->
 %% --------------------------------------------
 %% Move function
 %% --------------------------------------------
-    
+
+%% @doc move of one element in the list
+%%      if the list is empty, raise a badarg error
 -spec next(Zip_list :: zip_list(Element)) -> zip_list(Element).
 next(Zip_list) ->
     {Current, After_list} = 
@@ -70,3 +72,110 @@ next(Zip_list) ->
      After_list
     }.
     
+%% @doc move back of one element in the list
+%%      if the list is empty, raise a badarg error
+-spec previous(Zip_list :: zip_list(Element)) -> zip_list(Element).
+previous(Zip_list) ->
+    {Current, Before_list} = 
+	case Zip_list#zip_list.before_list of
+	    [] -> error(badarg);
+	    [H | T] -> {H, T}
+	end,
+    After_list = [Zip_list#zip_list.current | Zip_list#zip_list.after_list],
+    {zip_list,
+     Before_list, 
+     Zip_list#zip_list.before_size - 1,
+     Current,
+     Zip_list#zip_list.after_size + 1,
+     After_list
+    }.
+
+%% --------------------------------------------
+%% Insertion function
+%% --------------------------------------------
+
+%% @doc insert a new Element before the current.
+-spec insert_before(Element :: E, Zip_list :: zip_list(E)) -> zip_list(E).
+
+insert_before(Element, Zip_list) ->
+    Before_list = [Element | 
+		   Zip_list#zip_list.before_list],
+    inc_before_size(
+      set_before_list(Zip_list, Before_list)).
+
+%% @doc insert a new Element after the current.
+-spec insert_after(Element :: E, Zip_list :: zip_list(E)) -> zip_list(E).
+
+insert_after(Element, Zip_list) ->
+    After_list = [Element | 
+		   Zip_list#zip_list.after_list],
+    inc_after_size(
+      set_after_list(Zip_list, After_list)).
+
+%% -----------------------------------
+%% Setter function
+%% -----------------------------------
+set_before_list(Zip_list, Val) ->
+    {zip_list,
+     Val,
+     Zip_list#zip_list.before_size, 
+     Zip_list#zip_list.current,
+     Zip_list#zip_list.after_size, 
+     Zip_list#zip_list.after_list
+    }.
+
+dec_before_size(Zip_list) ->
+    {zip_list,
+     Zip_list#zip_list.before_list,
+     Zip_list#zip_list.before_size - 1, 
+     Zip_list#zip_list.current,
+     Zip_list#zip_list.after_size, 
+     Zip_list#zip_list.after_list
+    }.
+
+inc_before_size(Zip_list) ->
+    {zip_list,
+     Zip_list#zip_list.before_list,
+     Zip_list#zip_list.before_size + 1, 
+     Zip_list#zip_list.current,
+     Zip_list#zip_list.after_size, 
+     Zip_list#zip_list.after_list
+    }.
+
+set_current(Zip_list, Val) ->
+    {zip_list,
+     Zip_list#zip_list.before_list,
+     Zip_list#zip_list.before_size, 
+     Val,
+     Zip_list#zip_list.after_size, 
+     Zip_list#zip_list.after_list
+    }.
+
+dec_after_size(Zip_list) ->
+    {zip_list,
+     Zip_list#zip_list.before_list,
+     Zip_list#zip_list.before_size, 
+     Zip_list#zip_list.current,
+     Zip_list#zip_list.after_size - 1, 
+     Zip_list#zip_list.after_list
+    }.
+
+inc_after_size(Zip_list) ->
+    {zip_list,
+     Zip_list#zip_list.before_list,
+     Zip_list#zip_list.before_size, 
+     Zip_list#zip_list.current,
+     Zip_list#zip_list.after_size + 1, 
+     Zip_list#zip_list.after_list
+    }.
+
+set_after_list(Zip_list, Val) ->
+    {zip_list,
+     Zip_list#zip_list.before_list,
+     Zip_list#zip_list.before_size, 
+     Zip_list#zip_list.current,
+     Zip_list#zip_list.after_size, 
+     Val
+    }.
+
+
