@@ -20,3 +20,27 @@ fold_except2_two_elem_test() ->
 fold_except2_normal_test() ->
     Fun = fun (X, Acc) -> X + Acc end,
     ?assertEqual(10 , olists:foldl_except2(Fun, 0, [1, 2, 3, 4, 5, 6])).
+
+
+cmp(A, B) ->
+    if
+	A > B -> 1;
+	A < B -> -1;
+	true -> 0
+    end.
+	     
+
+ordered_insert_empty_test() ->
+    L = [],
+    L2 = olists:ordered_insert(2, fun cmp/2, L),
+    ?assertEqual(L2, [2]).
+
+ordered_insert_test() ->
+    L = [1,3,5],
+    L2 = olists:ordered_insert(2, fun cmp/2, L),
+    ?assertEqual(L2, [1,2,3,5]).
+
+ordered_insert_end_test() ->
+    L = [1,3,5],
+    L2 = olists:ordered_insert(6, fun cmp/2, L),
+    ?assertEqual(L2, [1,3,5,6]).
