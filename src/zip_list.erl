@@ -1,5 +1,5 @@
 -module(zip_list).
--export([init/0, of_list/1, of_list/2, get_current_element/1, next/1, previous/1, insert_after/2, insert_before/2]).
+-export([init/0, of_list/1, of_list/2, get_current_element/1, next/1, previous/1, insert_after/2, insert_before/2, foreach/2, to_list/1]).
 -record(zip_list, {before_list, before_size, current, after_size, after_list}).
 
 %% --------------------------------------------
@@ -41,6 +41,19 @@ of_list([H|T], Size) ->
 of_list(List) ->
     of_list(List, length(List)).
 
+%% @doc convert a zip_list to an erlang list
+-spec to_list(Zip_list :: zip_list(E)) -> list(E).
+
+to_list(Zip_list) ->
+    L1 = Zip_list#zip_list.before_list,
+    case Zip_list#zip_list.current of
+	null -> lists:reverse(L1);
+	C ->
+	    L2 = Zip_list#zip_list.after_list,
+	    lists:reverse(L1) ++ [C | L2]
+    end.
+    
+
 %% --------------------------------------------
 %% Getter function
 %% --------------------------------------------
@@ -55,12 +68,15 @@ get_current_element(Zip_list) ->
 %% --------------------------------------------
 
 %% @doc move of one element in the list
-%%      if the list is empty, raise a badarg error
+%%      if the list is empty, raise a empty_list error
 -spec next(Zip_list :: zip_list(Element)) -> zip_list(Element).
 next(Zip_list) ->
     {Current, After_list} = 
 	case Zip_list#zip_list.after_list of
-	    [] -> error(badarg);
+	    [] -> case Zip_list#zip_list.current of
+		      null -> error(empty_list);
+		      _ -> {null, []}
+		  end;
 	    [H | T] -> {H, T}
 	end,
     Before_list = [Zip_list#zip_list.current | Zip_list#zip_list.before_list],
@@ -73,12 +89,12 @@ next(Zip_list) ->
     }.
     
 %% @doc move back of one element in the list
-%%      if the list is empty, raise a badarg error
+%%      if the list is empty, raise a begin_list error
 -spec previous(Zip_list :: zip_list(Element)) -> zip_list(Element).
 previous(Zip_list) ->
     {Current, Before_list} = 
 	case Zip_list#zip_list.before_list of
-	    [] -> error(badarg);
+	    [] -> error(begin_list);
 	    [H | T] -> {H, T}
 	end,
     After_list = [Zip_list#zip_list.current | Zip_list#zip_list.after_list],
@@ -89,6 +105,8 @@ previous(Zip_list) ->
      Zip_list#zip_list.after_size + 1,
      After_list
     }.
+
+
 
 %% --------------------------------------------
 %% Insertion function
@@ -111,6 +129,28 @@ insert_after(Element, Zip_list) ->
 		   Zip_list#zip_list.after_list],
     inc_after_size(
       set_after_list(Zip_list, After_list)).
+
+%% @doc insert a new Element in an ordered zip_list using Function to compare element.
+%%      <br/> Function return 1 if A > B , -1 if A < B and 0 i A = B
+%% -spec ordered_insert(Element :: E, Zip_list :: zip_list(E), Function :: fun((A :: Element, B :: Element) -> integer())) -> zip_list(E)
+
+
+%% ordered_insert(E, Z_l, Fun) ->
+    
+%% -----------------
+%% Fold and Foreach
+%% -----------------
+
+-spec foreach(Function :: fun((Element :: E) -> ok), Zip_list :: zip_list(E)) -> ok.
+foreach(Fun, Zip_list) ->
+    case get_current_element(Zip_list) of
+	null -> ok;
+	E -> 
+	    ok = Fun(E),
+	    foreach(Fun, next(Zip_list))
+    end.
+	    
+	
 
 %% -----------------------------------
 %% Setter function

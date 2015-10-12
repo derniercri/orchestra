@@ -1,17 +1,26 @@
 -module(zip_list_test).
 -include_lib("eunit/include/eunit.hrl").
 
+
+to_list_empty_test() ->
+    ?assertEqual(zip_list:to_list(zip_list:of_list([])), []),
+    ?assertEqual(zip_list:to_list(zip_list:init()), []).
+    
+to_list_test() ->
+    L = [1,2,3,4],
+    ?assertEqual(zip_list:to_list(zip_list:of_list(L)), L).
+
 next_empty_test() ->
     L = zip_list:init(),
-    ?assertException(error, badarg, zip_list:next(L)).
+    ?assertException(error, empty_list, zip_list:next(L)).
 
 
 previous_empty_test() ->
     L = zip_list:init(),
-    ?assertException(error, badarg, zip_list:previous(L)).
+    ?assertException(error, begin_list, zip_list:previous(L)).
 
 next_test() ->
-    L = zip_list:of_list([1, 2, 3, 4]),
+    L = zip_list:of_list([1, 2, 3]),
     F = fun (Zip_list, Val) ->
 		?assertEqual(zip_list:get_current_element(Zip_list),
 			     Val),
@@ -19,7 +28,8 @@ next_test() ->
 	end,
     L2 = F(L, 1),
     L3 = F(L2, 2),
-    _ = F(L3, 3).
+    L4 = F(L3, 3),
+		?assertEqual(zip_list:get_current_element(L4), null).
 
 previous_test() ->
     L = zip_list:next(
