@@ -44,3 +44,28 @@ ordered_insert_end_test() ->
     L = [1,3,5],
     L2 = olists:ordered_insert(6, fun cmp/2, L),
     ?assertEqual(L2, [1,3,5,6]).
+
+ordered_insert_unique_empty_test() ->
+    L = [],
+    L2 = olists:ordered_insert_unique(2, fun cmp/2, L),
+    ?assertEqual(L2, [2]).
+
+ordered_insert_unique_test() ->
+    L = [1,3,5],
+    L2 = olists:ordered_insert_unique(2, fun cmp/2, L),
+    ?assertEqual(L2, [1,2,3,5]).
+
+ordered_insert_unique_end_test() ->
+    L = [1,3,5],
+    L2 = olists:ordered_insert_unique(6, fun cmp/2, L),
+    ?assertEqual(L2, [1,3,5,6]).
+
+ordered_insert_unique_exception_test() ->
+    L = [1,3,5],
+    ?assertException(
+       error,
+       element_already_present,
+       olists:ordered_insert_unique(3, fun cmp/2, L)
+      ).
+
+
