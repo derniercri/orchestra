@@ -23,7 +23,8 @@
          days_of_month/1,
          days_sequence_of/1,
          months_sequence/0,
-         day_in_week/1
+         day_in_week/1,
+	 to_string/1
         ]).
 
 %% Date creation
@@ -85,6 +86,25 @@ to_int(Date) -> calendar:datetime_to_gregorian_seconds(Date).
 %% @doc retreive timestamp from a date upper of 1970
 -spec to_timestamp(Date::metadt()) -> integer().
 to_timestamp(Date) -> to_int(Date) - ?UNIX_TIME.
+
+%% @doc convert to string 
+-spec to_string(Date :: metadt()) -> string().
+to_string({{Y, Mo, D}, {H, Mi, S}}) ->
+    integer_to_list(D)
+	++ "/"
+	++ integer_to_list(Mo)
+	++ "/"
+	++ integer_to_list(Y)
+	++ " at "
+	++ integer_to_list(H)
+	++ ":"
+	++ integer_to_list(Mi)
+	++ ":"
+	++ integer_to_list(S).
+	    
+
+		 
+
 
 %% Date comparison
 
@@ -169,3 +189,4 @@ months_sequence() -> lists:seq(1, 12).
 day_in_week(Date) ->
     {D, M, Y} = {year(Date), month(Date), day(Date)},
     calendar:day_of_the_week(Y, M, D).
+
