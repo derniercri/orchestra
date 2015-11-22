@@ -56,6 +56,8 @@ to_float_test() ->
     ?assert(coers:to_float("-45.77") == {ok, -45.77}),
     ?assert(coers:to_float(45) == {ok, 45.0}),
     ?assert(coers:to_float('45.0') == {ok, 45.0}),
+    ?assert(coers:to_float('.1') == {ok, 0.1}),
+    ?assert(coers:to_float(',1') == {ok, 0.1}),
     ?assert(coers:to_float("test") == {error, 0.0}),    
     ?assert(coers:to_float('test') == {error, 0.0}).
 
