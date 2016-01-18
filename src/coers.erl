@@ -92,10 +92,14 @@ to_float(Object) when is_list(Object) ->
     try list_to_float(Object) of 
         Result -> {ok, Result}
     catch _:_ ->
-            case string_color(Object) of 
-                integer -> to_float(list_to_integer(Object));
-                _ -> {error, 0.0}
-            end
+	    try list_to_float("0" ++ Object) of
+		Result -> {ok, Result}
+	    catch _:_ ->
+		    case string_color(Object) of 
+			integer -> to_float(list_to_integer(Object));
+			_ -> {error, 0.0}
+		    end
+	    end
     end;
 to_float(Object) when is_atom(Object) ->
     try
